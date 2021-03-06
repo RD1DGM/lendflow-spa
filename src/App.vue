@@ -1,30 +1,39 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="grid grid-cols-4 grid-rows-5 bg-gray-700 min-w-full h-12 gap-x-3">
+    <input
+      type="text"
+      v-model="searchInput"
+      placeholder="Search for Organization..."
+      class="col-start-2 col-end-3 row-start-2 row-end-4 h-6 rounded-sm px-2"
+    />
+    <input
+      type="button"
+      value="Search"
+      @click.prevent="getOrg"
+      class="col-start-3 col-end-4 row-start-2 row-end-4 h-6 rounded-sm"
+    />
   </div>
-  <router-view/>
+  <router-view />
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
+export default {
+  setup() {
+    const store = useStore();
+    const searchInput = ref("");
 
-#nav {
-  padding: 30px;
-}
+    onMounted(() => store.dispatch("getOrgs", store.state.perPage));
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    const getOrg = () => {
+      store.dispatch("getOrg", searchInput.value);
+      searchInput.value = "";
+      store.commit("setHasSearched");
+    };
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+    return { searchInput, getOrg };
+  },
+};
+</script>
+<style src="./assets/tailwind.css"></style>
